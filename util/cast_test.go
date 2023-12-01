@@ -1,17 +1,15 @@
-package cast_test
+package util
 
 import (
 	"testing"
-
-	"github.com/erin-doyle/advent-of-code-2023/cast"
 )
 
 func TestToInt(t *testing.T) {
-	if got := cast.ToInt("123"); got != 123 {
-		t.Errorf("cast.Int(123) = %v, want 123", got)
+	if got := ToInt("123"); got != 123 {
+		t.Errorf("Int(123) = %v, want 123", got)
 	}
-	if got := cast.ToInt("9835"); got != 9835 {
-		t.Errorf("cast.Int(9835) = %v, want 9835", got)
+	if got := ToInt("9835"); got != 9835 {
+		t.Errorf("Int(9835) = %v, want 9835", got)
 	}
 }
 
@@ -30,7 +28,7 @@ func TestToString(t *testing.T) {
 	}
 	for _, tt := range byteTests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := cast.ToString(tt.input); got != tt.want {
+			if got := ToString(tt.input); got != tt.want {
 				t.Errorf("ToString(byte) = %q, want %q", got, tt.want)
 			}
 		})
@@ -38,11 +36,11 @@ func TestToString(t *testing.T) {
 }
 
 func TestToASCIIConstants(t *testing.T) {
-	if cast.ASCIICodeCapA != 65 {
-		t.Errorf("Expected cast.ASCIICodeCapA to be 65, got %d", cast.ASCIICodeCapA)
+	if ASCIICodeCapA != 65 {
+		t.Errorf("Expected ASCIICodeCapA to be 65, got %d", ASCIICodeCapA)
 	}
-	if cast.ASCIICodeLowerA != 97 {
-		t.Errorf("Expected cast.ASCIICodeLowerA to be 97, got %d", cast.ASCIICodeLowerA)
+	if ASCIICodeLowerA != 97 {
+		t.Errorf("Expected ASCIICodeLowerA to be 97, got %d", ASCIICodeLowerA)
 	}
 }
 
@@ -55,16 +53,16 @@ func TestToASCIICode(t *testing.T) {
 		args args
 		want int
 	}{
-		{"example_string", args{"a"}, cast.ASCIICodeLowerA},
-		{"example_string", args{"b"}, cast.ASCIICodeLowerA + 1},
-		{"example_string", args{"z"}, cast.ASCIICodeLowerA + 25},
-		{"example_string", args{"C"}, cast.ASCIICodeCapA + 2},
+		{"example_string", args{"a"}, ASCIICodeLowerA},
+		{"example_string", args{"b"}, ASCIICodeLowerA + 1},
+		{"example_string", args{"z"}, ASCIICodeLowerA + 25},
+		{"example_string", args{"C"}, ASCIICodeCapA + 2},
 		{"example_rune", args{rune(97)}, 97},
 		{"example_byte", args{'a'}, 97},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := cast.ToASCIICode(tt.args.arg); got != tt.want {
+			if got := ToASCIICode(tt.args.arg); got != tt.want {
 				t.Errorf("ToASCIICode() = %v, want %v", got, tt.want)
 			}
 		})
@@ -86,7 +84,7 @@ func TestASCIIIntToChar(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := cast.ASCIIIntToChar(tt.args.code); got != tt.want {
+			if got := ASCIIIntToChar(tt.args.code); got != tt.want {
 				t.Errorf("ASCIIIntToChar() = %v, want %v", got, tt.want)
 			}
 		})
