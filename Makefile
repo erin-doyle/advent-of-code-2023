@@ -10,27 +10,27 @@ check-aoc-cookie:  ## ensures $AOC_SESSION_COOKIE env var is set
 
 skeleton: ## make skeleton main(_test).go files, optional: $DAY and $YEAR
 	@ if [[ -n $$DAY && -n $$YEAR ]]; then \
-		go run cmd/skeleton.go -day $(DAY) -year $(YEAR) ; \
+		go run cmd/skeleton/main.go -day $(DAY) -year $(YEAR) ; \
 	elif [[ -n $$DAY ]]; then \
-		go run cmd/skeleton.go -day $(DAY); \
+		go run cmd/skeleton/main.go -day $(DAY); \
 	else \
-		go run cmd/skeleton.go; \
+		go run cmd/skeleton/main.go; \
 	fi
 
 input: check-aoc-cookie ## get input, requires $AOC_SESSION_COOKIE, optional: $DAY and $YEAR
 	@ if [[ -n $$DAY && -n $$YEAR ]]; then \
-		go run cmd/input.go -day $(DAY) -year $(YEAR) -cookie $(AOC_SESSION_COOKIE); \
+		go run cmd/input/main.go -day $(DAY) -year $(YEAR) -cookie $(AOC_SESSION_COOKIE); \
 	elif [[ -n $$DAY ]]; then \
-		go run cmd/input.go -day $(DAY) -cookie $(AOC_SESSION_COOKIE); \
+		go run cmd/input/main.go -day $(DAY) -cookie $(AOC_SESSION_COOKIE); \
 	else \
-		go run cmd/input.go -cookie $(AOC_SESSION_COOKIE); \
+		go run cmd/input/main.go -cookie $(AOC_SESSION_COOKIE); \
 	fi
 
 prompt: check-aoc-cookie ## get prompt, requires $AOC_SESSION_COOKIE, optional: $DAY and $YEAR
 	@ if [[ -n $$DAY && -n $$YEAR ]]; then \
-		go run cmd/prompt.go -day $(DAY) -year $(YEAR) -cookie $(AOC_SESSION_COOKIE); \
+		go run cmd/prompt/main.go -day $(DAY) -year $(YEAR) -cookie $(AOC_SESSION_COOKIE); \
 	elif [[ -n $$DAY ]]; then \
-		go run cmd/prompt.go -day $(DAY) -cookie $(AOC_SESSION_COOKIE); \
+		go run cmd/prompt/main.go -day $(DAY) -cookie $(AOC_SESSION_COOKIE); \
 	else \
-		go run cmd/prompt.go -cookie $(AOC_SESSION_COOKIE); \
+		go run cmd/prompt/main.go -cookie $(AOC_SESSION_COOKIE); \
 	fi

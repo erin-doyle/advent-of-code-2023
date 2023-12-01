@@ -1,8 +1,8 @@
-package cmd
+package main
 
 import "github.com/erin-doyle/advent-of-code-2023/aoc"
 
 func main() {
 	day, year, cookie := aoc.ParseFlags()
-	aoc.GetInput(day, year, cookie)
+	aoc.GetPrompt(day, year, cookie)
 }
