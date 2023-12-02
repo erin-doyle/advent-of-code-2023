@@ -4,9 +4,9 @@ import (
 	"testing"
 )
 
-var example = ``
-
 func Test_part1(t *testing.T) {
+	var example = ``
+
 	tests := []struct {
 		name  string
 		input string
@@ -33,6 +33,8 @@ func Test_part1(t *testing.T) {
 }
 
 func Test_part2(t *testing.T) {
+	var example = ``
+
 	tests := []struct {
 		name  string
 		input string
