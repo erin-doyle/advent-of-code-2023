@@ -4,6 +4,8 @@ import (
 	_ "embed"
 	"flag"
 	"fmt"
+	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/erin-doyle/advent-of-code-2023/util"
@@ -38,19 +40,42 @@ func main() {
 }
 
 func part1(input string) int {
-	parsed := parseInput(input)
-	_ = parsed
+	calibrationDocument := parseInput(input)
 
-	return 0
+	var sumCalibrationValues int
+	sumCalibrationValues = 0
+
+	for _, calibrationString := range calibrationDocument {
+		r, _ := regexp.Compile(`\b*(\d){1}\b*`)
+
+		var calibrationValues []string
+		calibrationValues = r.FindAllString(calibrationString, -1)
+
+		if len(calibrationValues) == 0 {
+			continue
+		}
+
+		var calibrationValueStr string
+		calibrationValueStr = calibrationValues[0]
+
+		if len(calibrationValues) > 1 {
+			calibrationValueStr += calibrationValues[len(calibrationValues)-1]
+		} else {
+			calibrationValueStr += calibrationValues[0]
+		}
+
+		calibrationValue, _ := strconv.Atoi(calibrationValueStr)
+		sumCalibrationValues += calibrationValue
+	}
+
+	return sumCalibrationValues
 }
 
 func part2(input string) int {
 	return 0
 }
 
-func parseInput(input string) (ans []int) {
-	for _, line := range strings.Split(input, "\n") {
-		ans = append(ans, util.ToInt(line))
-	}
+func parseInput(input string) (ans []string) {
+	ans = strings.Split(input, "\n")
 	return ans
 }
