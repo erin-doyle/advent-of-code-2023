@@ -10,7 +10,7 @@ import (
 
 // ToInt will case a given arg into an int type.
 // Supported types are:
-//    - string
+//   - string
 func ToInt(arg interface{}) int {
 	var val int
 	switch arg.(type) {
@@ -28,9 +28,9 @@ func ToInt(arg interface{}) int {
 
 // ToString will case a given arg into an int type.
 // Supported types are:
-//    - int
-//    - byte
-//    - rune
+//   - int
+//   - byte
+//   - rune
 func ToString(arg interface{}) string {
 	var str string
 	switch arg.(type) {
@@ -76,4 +76,12 @@ func ToASCIICode(arg interface{}) int {
 // ASCIIIntToChar returns a one character string of the given int
 func ASCIIIntToChar(code int) string {
 	return string(rune(code))
+}
+
+func CanCastAtoi(value string) bool {
+	if _, err := strconv.Atoi(value); err == nil {
+		return true
+	} else {
+		return false
+	}
 }

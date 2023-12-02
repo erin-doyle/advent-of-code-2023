@@ -1,6 +1,6 @@
 ## Running Locally
 ### Requirements
-Go 1.16+ is required because [embed](https://golang.org/pkg/embed/) is used for input files.
+Go 1.18+ is required because [embed](https://golang.org/pkg/embed/) is used for input files and generics are being used.
 
 Use `go run main.go -part <1 or 2>` will be usable to run the actual inputs for that day.
 

@@ -4,6 +4,7 @@ import (
 	_ "embed"
 	"flag"
 	"fmt"
+	"log"
 	"regexp"
 	"strconv"
 	"strings"
@@ -13,6 +14,18 @@ import (
 
 //go:embed input.txt
 var input string
+
+var numVals = map[string]string{
+	"one":   "1",
+	"two":   "2",
+	"three": "3",
+	"four":  "4",
+	"five":  "5",
+	"six":   "6",
+	"seven": "7",
+	"eight": "8",
+	"nine":  "9",
+}
 
 func init() {
 	// do this in init (not main) so test file has same input
@@ -45,9 +58,9 @@ func part1(input string) int {
 	var sumCalibrationValues int
 	sumCalibrationValues = 0
 
-	for _, calibrationString := range calibrationDocument {
-		r, _ := regexp.Compile(`\b*(\d){1}\b*`)
+	r, _ := regexp.Compile(`\b*(\d){1}\b*`)
 
+	for _, calibrationString := range calibrationDocument {
 		var calibrationValues []string
 		calibrationValues = r.FindAllString(calibrationString, -1)
 
@@ -72,7 +85,49 @@ func part1(input string) int {
 }
 
 func part2(input string) int {
-	return 0
+
+	calibrationDocument := parseInput(input)
+
+	var sumCalibrationValues int
+	sumCalibrationValues = 0
+
+	numSearchStrings := strings.Join(util.Keys(numVals), "|")
+	firstMatch, _ := regexp.Compile(fmt.Sprintf(`(%s|\d).*`, numSearchStrings))
+	lastMatch, _ := regexp.Compile(fmt.Sprintf(`.*(%s|\d)`, numSearchStrings))
+
+	for _, calibrationString := range calibrationDocument {
+		var valueOne, valueTwo string
+		valueOne = getNumMatch(calibrationString, firstMatch)
+		valueTwo = getNumMatch(calibrationString, lastMatch)
+
+		calibrationValue, err := strconv.Atoi((valueOne + valueTwo))
+
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		sumCalibrationValues += calibrationValue
+	}
+
+	return sumCalibrationValues
+}
+
+func getNumMatch(calibrationString string, regex *regexp.Regexp) string {
+	var calibrationValues [][]string
+	calibrationValues = regex.FindAllStringSubmatch(calibrationString, -1)
+
+	if len(calibrationValues) == 0 {
+		log.Fatal("No calibration values found!")
+	}
+
+	var calibrationValueStr string
+	calibrationValueStr = calibrationValues[0][1]
+
+	if util.CanCastAtoi(calibrationValueStr) {
+		return calibrationValueStr
+	} else {
+		return numVals[calibrationValueStr]
+	}
 }
 
 func parseInput(input string) (ans []string) {

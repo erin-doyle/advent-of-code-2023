@@ -6,9 +6,9 @@ import (
 
 func Test_part1(t *testing.T) {
 	var example = `1abc2
-	pqr3stu8vwx
-	a1b2c3d4e5f
-	treb7uchet`
+pqr3stu8vwx
+a1b2c3d4e5f
+treb7uchet`
 
 	tests := []struct {
 		name  string
@@ -36,7 +36,13 @@ func Test_part1(t *testing.T) {
 }
 
 func Test_part2(t *testing.T) {
-	var example = ``
+	var example = `two1nine
+eightwothree
+abcone2threexyz
+xtwone3four
+4nineeightseven2
+zoneight234
+7pqrstsixteen`
 
 	tests := []struct {
 		name  string
@@ -46,13 +52,13 @@ func Test_part2(t *testing.T) {
 		{
 			name:  "example",
 			input: example,
-			want:  0,
+			want:  281,
 		},
-		// {
-		// 	name:  "actual",
-		// 	input: input,
-		// 	want:  0,
-		// },
+		{
+			name:  "actual",
+			input: input,
+			want:  55093,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
