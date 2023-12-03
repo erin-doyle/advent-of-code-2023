@@ -13,44 +13,33 @@ import (
 //go:embed input.txt
 var input string
 
-// var shouldLog bool = false
-
 func isPartNumber(line string, start int, end int) bool {
 	characterRegex := regexp.MustCompile(`[^0-9.]`)
+	var isPartNumber bool = false
 
-	// if shouldLog {
-	// 	fmt.Printf("start-1: %s\n", string(line[start-1]))
-	// }
+	var checkStart int
+	var checkEnd int
 
-	if start > 0 && characterRegex.MatchString(string(line[start-1])) {
-		return true
+	if start > 0 {
+		checkStart = start - 1
+	} else {
+		checkStart = start
 	}
 
-	// if shouldLog {
-	// 	fmt.Printf("start: %s\n", string(line[start]))
-	// }
-
-	if characterRegex.MatchString(string(line[start])) {
-		return true
+	if end+1 < len(line) {
+		checkEnd = end + 1
+	} else {
+		checkEnd = end
 	}
 
-	// if shouldLog {
-	// 	fmt.Printf("end: %s\n", string(line[end]))
-	// }
-
-	if characterRegex.MatchString(string(line[end])) {
-		return true
+	for index := checkStart; index <= checkEnd; index++ {
+		if characterRegex.MatchString(string(line[index])) {
+			isPartNumber = true
+			break
+		}
 	}
 
-	// if shouldLog {
-	// 	fmt.Printf("end+1: %s\n", string(line[end+1]))
-	// }
-
-	if (end+1) < len(line) && characterRegex.MatchString(string(line[end+1])) {
-		return true
-	}
-
-	return false
+	return isPartNumber
 }
 
 func part1(input string) int {
@@ -74,8 +63,6 @@ func part1(input string) int {
 
 		curLine = schematicLines[index]
 
-		fmt.Println(curLine)
-
 		if index-1 > -1 {
 			prevLine = schematicLines[index-1]
 		}
@@ -92,18 +79,8 @@ func part1(input string) int {
 			var end int = numberIndex[1] - 1
 			partNumber := util.ToInt(curLine[start : end+1])
 
-			// TODO: remove
-			// if partNumber == 114 {
-			// 	fmt.Printf("start: %d\n", start)
-			// 	fmt.Printf("end: %d\n", end)
-			// 	shouldLog = true
-			// } else {
-			// 	shouldLog = false
-			// }
-
 			// check curLine
 			if isPartNumber(curLine, start, end) {
-				// fmt.Printf("is Part Number: %d\n", partNumber)
 				sumOfPartNumbers += partNumber
 				continue
 			}
@@ -111,7 +88,6 @@ func part1(input string) int {
 			// check prevLine
 			if prevLine != "" {
 				if isPartNumber(prevLine, start, end) {
-					// fmt.Printf("is Part Number: %d\n", partNumber)
 					sumOfPartNumbers += partNumber
 					continue
 				}
@@ -120,13 +96,10 @@ func part1(input string) int {
 			// check nextLine
 			if nextLine != "" {
 				if isPartNumber(nextLine, start, end) {
-					// fmt.Printf("is Part Number: %d\n", partNumber)
 					sumOfPartNumbers += partNumber
 					continue
 				}
 			}
-
-			// fmt.Printf("NOT Part Number: %d\n", partNumber)
 		}
 	}
 
