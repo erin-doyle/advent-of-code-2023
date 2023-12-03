@@ -24,3 +24,5 @@ prompt: ## get prompt, required: $DAY and $YEAR, optional: $COOKIE
 	else \
 		go run cmd/prompt/main.go -day $(DAY) -year $(YEAR); \
 	fi
+
+all: skeleton input prompt
