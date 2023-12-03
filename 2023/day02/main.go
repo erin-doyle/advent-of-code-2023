@@ -65,7 +65,34 @@ func part1(input string) int {
 }
 
 func part2(input string) int {
-	return 0
+	var sumOfPowers int = 0
+
+	games := parseInput(input)
+
+	for _, nextGame := range games {
+		minimums := map[string]int{
+			"blue":  0,
+			"green": 0,
+			"red":   0,
+		}
+
+		for _, play := range nextGame.plays {
+
+			for _, cubeColor := range colors {
+				cubeCount, ok := play[cubeColor]
+
+				if ok && cubeCount > minimums[cubeColor] {
+					minimums[cubeColor] = cubeCount
+				}
+
+			}
+		}
+
+		// The power of a set of cubes is equal to the numbers of red, green, and blue cubes multiplied together
+		sumOfPowers += minimums["blue"] * minimums["green"] * minimums["red"]
+	}
+
+	return sumOfPowers
 }
 
 func parseInput(input string) (ans []game) {
