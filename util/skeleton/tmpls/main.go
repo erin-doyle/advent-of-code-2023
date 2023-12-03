@@ -12,6 +12,24 @@ import (
 //go:embed input.txt
 var input string
 
+func part1(input string) int {
+	parsed := parseInput(input)
+	_ = parsed
+
+	return 0
+}
+
+func part2(input string) int {
+	return 0
+}
+
+func parseInput(input string) (ans []int) {
+	for _, line := range strings.Split(input, "\n") {
+		ans = append(ans, util.ToInt(line))
+	}
+	return ans
+}
+
 func init() {
 	// do this in init (not main) so test file has same input
 	input = strings.TrimRight(input, "\n")
@@ -35,22 +53,4 @@ func main() {
 		util.CopyToClipboard(fmt.Sprintf("%v", ans))
 		fmt.Println("Output:", ans)
 	}
-}
-
-func part1(input string) int {
-	parsed := parseInput(input)
-	_ = parsed
-
-	return 0
-}
-
-func part2(input string) int {
-	return 0
-}
-
-func parseInput(input string) (ans []int) {
-	for _, line := range strings.Split(input, "\n") {
-		ans = append(ans, util.ToInt(line))
-	}
-	return ans
 }
