@@ -5,32 +5,22 @@ help: ## Show this help
 	@ echo 'Available targets:'
 	@ grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
-check-aoc-cookie:  ## ensures $AOC_SESSION_COOKIE env var is set
-	@ test $${AOC_SESSION_COOKIE?env var not set}
+# check-aoc-cookie:  ## ensures $AOC_SESSION_COOKIE env var is set
+# 	@ test $${AOC_SESSION_COOKIE?env var not set}
 
-skeleton: ## make skeleton main(_test).go files, optional: $DAY and $YEAR
-	@ if [[ -n $$DAY && -n $$YEAR ]]; then \
-		go run cmd/skeleton/main.go -day $(DAY) -year $(YEAR) ; \
-	elif [[ -n $$DAY ]]; then \
-		go run cmd/skeleton/main.go -day $(DAY); \
+skeleton: ## make skeleton main(_test).go files, required: $DAY and $YEAR
+	go run cmd/skeleton/main.go -day $(DAY) -year $(YEAR);
+
+input: ## get input, required: $DAY and $YEAR, optional: $COOKIE
+	@ if [[ -n $$COOKIE ]]; then \
+		go run cmd/input/main.go -day $(DAY) -year $(YEAR) -cookie $(COOKIE); \
 	else \
-		go run cmd/skeleton/main.go; \
+		go run cmd/input/main.go -day $(DAY) -year $(YEAR); \
 	fi
 
-input: check-aoc-cookie ## get input, requires $AOC_SESSION_COOKIE, optional: $DAY and $YEAR
-	@ if [[ -n $$DAY && -n $$YEAR ]]; then \
-		go run cmd/input/main.go -day $(DAY) -year $(YEAR) -cookie $(AOC_SESSION_COOKIE); \
-	elif [[ -n $$DAY ]]; then \
-		go run cmd/input/main.go -day $(DAY) -cookie $(AOC_SESSION_COOKIE); \
+prompt: ## get prompt, required: $DAY and $YEAR, optional: $COOKIE
+	@ if [[ -n $$COOKIE ]]; then \
+		go run cmd/prompt/main.go -day $(DAY) -year $(YEAR) -cookie $(COOKIE); \
 	else \
-		go run cmd/input/main.go -cookie $(AOC_SESSION_COOKIE); \
-	fi
-
-prompt: check-aoc-cookie ## get prompt, requires $AOC_SESSION_COOKIE, optional: $DAY and $YEAR
-	@ if [[ -n $$DAY && -n $$YEAR ]]; then \
-		go run cmd/prompt/main.go -day $(DAY) -year $(YEAR) -cookie $(AOC_SESSION_COOKIE); \
-	elif [[ -n $$DAY ]]; then \
-		go run cmd/prompt/main.go -day $(DAY) -cookie $(AOC_SESSION_COOKIE); \
-	else \
-		go run cmd/prompt/main.go -cookie $(AOC_SESSION_COOKIE); \
+		go run cmd/prompt/main.go -day $(DAY) -year $(YEAR); \
 	fi

@@ -12,6 +12,8 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/erin-doyle/advent-of-code-2023/util"
 )
 
 func ParseFlags() (day, year int, cookie string) {
@@ -19,7 +21,7 @@ func ParseFlags() (day, year int, cookie string) {
 	flag.IntVar(&day, "day", today.Day(), "day number to fetch, 1-25")
 	flag.IntVar(&year, "year", today.Year(), "AOC year")
 	// defaults to env variable
-	flag.StringVar(&cookie, "cookie", os.Getenv("AOC_SESSION_COOKIE"), "AOC session cookie")
+	flag.StringVar(&cookie, "cookie", util.Getenv("AOC_SESSION_COOKIE"), "AOC session cookie")
 	flag.Parse()
 
 	if day > 25 || day < 1 {
