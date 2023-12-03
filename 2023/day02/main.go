@@ -13,24 +13,55 @@ import (
 //go:embed input.txt
 var input string
 
-type play struct {
-	blue  int
-	green int
-	red   int
-}
-
 type game struct {
 	id    int
 	plays []map[string]int
 }
 
 var colors = []string{"blue", "green", "red"}
+var limits = map[string]int{
+	"blue":  14,
+	"green": 13,
+	"red":   12,
+}
 
 func part1(input string) int {
-	parsed := parseInput(input)
-	_ = parsed
+	var sumOfPossibleGames int = 0
+	var totalPossibleCubes int = limits["blue"] + limits["green"] + limits["red"]
 
-	return 0
+	games := parseInput(input)
+
+	for _, nextGame := range games {
+		var isGamePossible bool = true
+
+		for _, play := range nextGame.plays {
+			var totalPlayCubes int = 0
+
+			for _, cubeColor := range colors {
+				cubeCount, ok := play[cubeColor]
+
+				if ok {
+					if cubeCount > limits[cubeColor] {
+						isGamePossible = false
+					}
+
+					totalPlayCubes += cubeCount
+				}
+
+			}
+
+			if isGamePossible && totalPlayCubes > totalPossibleCubes {
+				isGamePossible = false
+			}
+		}
+
+		if isGamePossible {
+			sumOfPossibleGames += nextGame.id
+		}
+
+	}
+
+	return sumOfPossibleGames
 }
 
 func part2(input string) int {
@@ -46,7 +77,7 @@ func parseInput(input string) (ans []game) {
 		gameIdRegex := regexp.MustCompile(`Game (\d+):`)
 		nextGame.id = util.ToInt(gameIdRegex.FindStringSubmatch(line)[1])
 
-		playsRegex := regexp.MustCompile(`Game \d+: ([a-z1-9,;\s]+)`)
+		playsRegex := regexp.MustCompile(`Game \d+: ([a-z0-9,;\s]+)`)
 		playsString := strings.Split(playsRegex.FindStringSubmatch(line)[1], ";")
 
 		for _, playString := range playsString {
