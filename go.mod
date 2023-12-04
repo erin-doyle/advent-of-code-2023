@@ -6,5 +6,4 @@ require golang.org/x/net v0.0.0-20201110031124-69a78807bb2b
 
 require (
 	github.com/joho/godotenv v1.5.1 // indirect
-	github.com/mpvl/unique v0.0.0-20150818121801-cbe035fff7de // indirect
 )

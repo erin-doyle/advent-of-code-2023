@@ -7,8 +7,6 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/mpvl/unique"
-
 	"github.com/erin-doyle/advent-of-code-2023/util"
 )
 
@@ -145,7 +143,9 @@ func findAdjacentNumbers(line string, location int) []int {
 	}
 
 	// dedupe foundNumbers
-	unique.Ints(&foundNumbers)
+	if len(foundNumbers) > 0 {
+		foundNumbers = util.DedupeInts(foundNumbers)
+	}
 
 	return foundNumbers
 }
