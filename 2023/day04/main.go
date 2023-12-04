@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"regexp"
+	"slices"
 	"strings"
 
 	"github.com/erin-doyle/advent-of-code-2023/util"
@@ -14,17 +15,50 @@ import (
 var input string
 
 type card struct {
-	winningNumbers string
-	myNumbers      string
+	winningNumbers []string
+	myNumbers      []string
 }
 
 var pointsCache = map[int]int{}
 
+func compareStrings(a, b string) int {
+	// returns a negative number when a < b, a positive number when a > b and zero when a == b
+	return strings.Compare(strings.ToLower(a), strings.ToLower(b))
+}
+
 func getCountMyWinningNumbers(card card) int {
 	var count int = 0
 
-	// find the winning numbers (numbers on the right that are in the left)
-	// TODO
+	slices.SortFunc(card.winningNumbers, compareStrings)
+	slices.SortFunc(card.myNumbers, compareStrings)
+
+	fmt.Println(card.winningNumbers) // TODO: remove
+	fmt.Println(card.myNumbers)      // TODO: remove
+
+	for _, myNumber := range card.myNumbers {
+		for _, winningNumber := range card.winningNumbers {
+			comparison := compareStrings(myNumber, winningNumber)
+
+			// match found
+			if comparison == 0 {
+				count++
+				fmt.Printf("match found: %s == %s\n", myNumber, winningNumber) // TODO: remove
+				break
+			}
+
+			// no match in winning numbers, exit
+			if comparison == 1 {
+				fmt.Printf("no match - exiting: %s > %s\n", myNumber, winningNumber) // TODO: remove
+				break
+			}
+
+			// match not yet found, keep looking
+			if comparison == -1 {
+				fmt.Printf("no match - keep looking: %s < %s\n", myNumber, winningNumber) // TODO: remove
+				break
+			}
+		}
+	}
 
 	return count
 }
@@ -54,8 +88,6 @@ func part1(input string) int {
 	cards := parseInput(input)
 
 	for _, card := range cards {
-		fmt.Println(card.winningNumbers) // TODO: remove
-		fmt.Println(card.myNumbers)      // TODO: remove
 		countMyWinningNumbers := getCountMyWinningNumbers(card)
 
 		if countMyWinningNumbers == 0 {
@@ -81,13 +113,15 @@ func parseInput(input string) (ans []card) {
 		// example:
 		// Card 1: 41 48 83 86 17 | 83 86  6 31 17  9 48 53
 		numbersRegex := regexp.MustCompile(`Card \d+: (?P<winning>[\d\s]+) \| (?P<mine>[\d\s]+)`)
-		numbers := numbersRegex.FindStringSubmatch(line)
+		cardNumbers := numbersRegex.FindStringSubmatch(line)
 
 		for i, name := range numbersRegex.SubexpNames() {
+			var numbers []string = strings.Split(cardNumbers[i], " ")
+
 			if name == "winning" {
-				nextCard.winningNumbers = numbers[i]
+				nextCard.winningNumbers = numbers
 			} else if name == "mine" {
-				nextCard.myNumbers = numbers[i]
+				nextCard.myNumbers = numbers
 			}
 		}
 

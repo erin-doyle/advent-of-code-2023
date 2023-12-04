@@ -1,11 +1,5 @@
 ## Running Locally
 
-### Requirements
-
-Go 1.18+ is required because [embed](https://golang.org/pkg/embed/) is used for input files and generics are being used.
-
-### Usage
-
 Use `go run main.go -part <1 or 2>` to run the actual inputs for that day.
 
 Use `go test -run RegExpToMatchFunctionNames .` to run examples and unit tests via the `main_test.go` files.
