@@ -42,7 +42,16 @@ func Test_part1(t *testing.T) {
 }
 
 func Test_part2(t *testing.T) {
-	var example = ``
+	var example = `467..114..
+...*......
+..35..633.
+......#...
+617*......
+.....+.58.
+..592.....
+......755.
+...$.*....
+.664.598..`
 
 	tests := []struct {
 		name  string
@@ -52,7 +61,7 @@ func Test_part2(t *testing.T) {
 		{
 			name:  "example",
 			input: example,
-			want:  0,
+			want:  467835,
 		},
 		// {
 		// 	name:  "actual",

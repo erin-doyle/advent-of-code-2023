@@ -7,6 +7,8 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/mpvl/unique"
+
 	"github.com/erin-doyle/advent-of-code-2023/util"
 )
 
@@ -106,8 +108,112 @@ func part1(input string) int {
 	return sumOfPartNumbers
 }
 
+func findAdjacentNumbers(line string, location int) []int {
+	numberRegex := regexp.MustCompile(`\d`)
+	var foundNumbers []int
+
+	var checkStart int
+	var checkEnd int
+
+	if location > 0 {
+		checkStart = location - 1
+	} else {
+		checkStart = location
+	}
+
+	if location+1 < len(line) {
+		checkEnd = location + 1
+	} else {
+		checkEnd = location
+	}
+
+	for index := checkStart; index <= checkEnd; index++ {
+		if numberRegex.MatchString(string(line[index])) {
+			numStart := index
+			numEnd := index
+
+			for numStart > 0 && numberRegex.MatchString(string(line[numStart-1])) {
+				numStart--
+			}
+
+			for numEnd < len(line)-1 && numberRegex.MatchString(string(line[numEnd+1])) {
+				numEnd++
+			}
+
+			foundNumbers = append(foundNumbers, util.ToInt(line[numStart:numEnd+1]))
+		}
+	}
+
+	// dedupe foundNumbers
+	unique.Ints(&foundNumbers)
+
+	return foundNumbers
+}
+
 func part2(input string) int {
-	return 0
+	var sumOfGearRatios int = 0
+
+	schematicLines := parseInput(input)
+
+	// example:
+	// 467..114..
+	// ...*......
+	// ..35..633.
+	// ......#...
+	// 617*......
+	// .....+.58.
+	// ..592.....
+	// ......755.
+	// ...$.*....
+	// .664.598..
+	for index := 0; index < len(schematicLines); index++ {
+		curLine := schematicLines[index]
+
+		gearRegex := regexp.MustCompile(`\*`)
+		var gearIndices [][]int = gearRegex.FindAllStringIndex(curLine, -1)
+
+		if len(gearIndices) == 0 {
+			continue
+		}
+
+		var prevLine, nextLine string
+
+		if index-1 > -1 {
+			prevLine = schematicLines[index-1]
+		}
+
+		if index+1 < len(schematicLines) {
+			nextLine = schematicLines[index+1]
+		}
+
+		for _, gearIndex := range gearIndices {
+			var location int = gearIndex[0]
+			var adjacentNumbers []int
+
+			// check curLine
+			adjacentNumbers = append(adjacentNumbers, findAdjacentNumbers(curLine, location)...)
+
+			// check prevLine
+			if prevLine != "" {
+				adjacentNumbers = append(adjacentNumbers, findAdjacentNumbers(prevLine, location)...)
+			}
+
+			// check nextLine
+			if nextLine != "" {
+				adjacentNumbers = append(adjacentNumbers, findAdjacentNumbers(nextLine, location)...)
+			}
+
+			// A gear is any * symbol that is adjacent to exactly two part numbers.
+			if len(adjacentNumbers) != 2 {
+				continue
+			}
+
+			// Its gear ratio is the result of multiplying those two numbers together.
+			sumOfGearRatios += adjacentNumbers[0] * adjacentNumbers[1]
+		}
+	}
+
+	return sumOfGearRatios
 }
 
 func parseInput(input string) (ans []string) {
