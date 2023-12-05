@@ -16,11 +16,19 @@ import (
 var input string
 
 type card struct {
+	id             string
 	winningNumbers []string
 	myNumbers      []string
 }
 
+type winningCard struct {
+	card                card
+	countWinningNumbers int
+	countCopies         int
+}
+
 var pointsCache = map[int]int{}
+var winnersCache = map[string]winningCard{}
 
 func compareNumStrings(a, b string) int {
 	aInt, _ := strconv.Atoi(a)
@@ -116,8 +124,46 @@ func part1(input string) int {
 	return sumPoints
 }
 
+func getCountCardCopies(cardId int, allCards *[]card) int {
+	winningCard, ok := winnersCache[strconv.Itoa(cardId)]
+
+	if !ok {
+		card := (*allCards)[cardId-1]
+		winningCard.card = card
+		winningCard.countWinningNumbers = getCountMyWinningNumbers(card)
+
+		if winningCard.countWinningNumbers > 0 {
+			var index int = 1
+			var countCopies int = 0
+
+			// exit if we've reached the table
+			for index <= winningCard.countWinningNumbers && (index+cardId) <= len(*allCards) {
+				countCopies += getCountCardCopies((index+cardId), allCards) + 1
+				index++
+			}
+
+			winningCard.countCopies = countCopies
+
+		} else {
+			winningCard.countCopies = 0
+		}
+
+		winnersCache[winningCard.card.id] = winningCard
+	}
+
+	return winningCard.countCopies
+}
+
 func part2(input string) int {
-	return 0
+	var sumTotalCards int = 0
+
+	cards := parseInput(input)
+
+	for cardNo := len(cards); cardNo > 0; cardNo-- {
+		sumTotalCards += getCountCardCopies(cardNo, &cards) + 1
+	}
+
+	return sumTotalCards
 }
 
 func parseInput(input string) (ans []card) {
@@ -126,11 +172,16 @@ func parseInput(input string) (ans []card) {
 
 		// example:
 		// Card 1: 41 48 83 86 17 | 83 86  6 31 17  9 48 53
-		numbersRegex := regexp.MustCompile(`Card\s+\d+: (?P<winning>[\d\s]+) \| (?P<mine>[\d\s]+)`)
+		numbersRegex := regexp.MustCompile(`Card\s+(?P<id>\d+): (?P<winning>[\d\s]+) \| (?P<mine>[\d\s]+)`)
 		cardNumbers := numbersRegex.FindStringSubmatch(line)
 
 		for i, name := range numbersRegex.SubexpNames() {
 			if i == 0 {
+				continue
+			}
+
+			if name == "id" {
+				nextCard.id = cardNumbers[i]
 				continue
 			}
 
