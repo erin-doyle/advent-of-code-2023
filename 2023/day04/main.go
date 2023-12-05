@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"regexp"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/erin-doyle/advent-of-code-2023/util"
@@ -21,41 +22,56 @@ type card struct {
 
 var pointsCache = map[int]int{}
 
-func compareStrings(a, b string) int {
-	// returns a negative number when a < b, a positive number when a > b and zero when a == b
-	return strings.Compare(strings.ToLower(a), strings.ToLower(b))
+func compareNumStrings(a, b string) int {
+	aInt, _ := strconv.Atoi(a)
+	bInt, _ := strconv.Atoi(b)
+
+	if aInt == bInt {
+		return 0
+	}
+	if aInt < bInt {
+		return -1
+	}
+	if aInt > bInt {
+		return 1
+	}
+
+	return -1
 }
 
 func getCountMyWinningNumbers(card card) int {
 	var count int = 0
 
-	slices.SortFunc(card.winningNumbers, compareStrings)
-	slices.SortFunc(card.myNumbers, compareStrings)
-
-	fmt.Println(card.winningNumbers) // TODO: remove
-	fmt.Println(card.myNumbers)      // TODO: remove
+	slices.SortFunc(card.winningNumbers, compareNumStrings)
+	slices.SortFunc(card.myNumbers, compareNumStrings)
 
 	for _, myNumber := range card.myNumbers {
+
+		if myNumber == "" {
+			continue
+		}
+
 		for _, winningNumber := range card.winningNumbers {
-			comparison := compareStrings(myNumber, winningNumber)
+			if winningNumber == "" {
+				continue
+			}
+
+			comparison := compareNumStrings(myNumber, winningNumber)
 
 			// match found
 			if comparison == 0 {
 				count++
-				fmt.Printf("match found: %s == %s\n", myNumber, winningNumber) // TODO: remove
 				break
 			}
 
 			// no match in winning numbers, exit
-			if comparison == 1 {
-				fmt.Printf("no match - exiting: %s > %s\n", myNumber, winningNumber) // TODO: remove
+			if comparison == -1 {
 				break
 			}
 
 			// match not yet found, keep looking
-			if comparison == -1 {
-				fmt.Printf("no match - keep looking: %s < %s\n", myNumber, winningNumber) // TODO: remove
-				break
+			if comparison == 1 {
+				continue
 			}
 		}
 	}
@@ -70,9 +86,7 @@ func getPoints(countWinningNumbers int) int {
 	if _, ok := pointsCache[countWinningNumbers]; !ok {
 		var points int = 1
 
-		// TODO: this can be further optimized by starting with the nearest number in the cache if one exists
-
-		for idx := 1; idx <= countWinningNumbers; idx++ {
+		for idx := 1; idx < countWinningNumbers; idx++ {
 			points = points * 2
 		}
 
@@ -112,10 +126,14 @@ func parseInput(input string) (ans []card) {
 
 		// example:
 		// Card 1: 41 48 83 86 17 | 83 86  6 31 17  9 48 53
-		numbersRegex := regexp.MustCompile(`Card \d+: (?P<winning>[\d\s]+) \| (?P<mine>[\d\s]+)`)
+		numbersRegex := regexp.MustCompile(`Card\s+\d+: (?P<winning>[\d\s]+) \| (?P<mine>[\d\s]+)`)
 		cardNumbers := numbersRegex.FindStringSubmatch(line)
 
 		for i, name := range numbersRegex.SubexpNames() {
+			if i == 0 {
+				continue
+			}
+
 			var numbers []string = strings.Split(cardNumbers[i], " ")
 
 			if name == "winning" {
